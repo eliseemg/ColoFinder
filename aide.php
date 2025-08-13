@@ -2,6 +2,7 @@
 /* Template Name: Aide */
 get_header(); // Inclure le header
 ?>
+/* ceci est la page d'aide */ 
 
 <div class="container mt-5 aide-container">
     <h1 class="text-center mb-4">CONTACT</h1>
