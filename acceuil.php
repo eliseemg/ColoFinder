@@ -7,14 +7,15 @@ get_header(); ?>
     <div class="hero-content">
         <!-- Grille d'images -->
         <div class="hero-images">
-            <img src="https://via.placeholder.com/150" alt="Personne 1">
-            <img src="https://via.placeholder.com/150" alt="Personne 2">
-            <img src="https://via.placeholder.com/150" alt="Personne 3">
-            <img src="https://via.placeholder.com/150" alt="Personne 4">
-            <img src="https://via.placeholder.com/150" alt="Personne 5">
-            <img src="https://via.placeholder.com/150" alt="Personne 6">
-            <img src="https://via.placeholder.com/150" alt="Personne 7">
-            <img src="https://via.placeholder.com/150" alt="Personne 8">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne1.jpg" alt="Personne 1">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne2.jpg" alt="Personne 2">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne3.jpg" alt="Personne 3">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne4.jpg" alt="Personne 4">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne5.jpg" alt="Personne 5">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne6.jpg" alt="Personne 6">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne7.jpg" alt="Personne 7">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne8.jpg" alt="Personne 8">
+            <img src="<?php echo get_template_directory_uri()?>/assets/personne9.jpg" alt="Personne 9">
         </div>
 
         <!-- Texte -->
