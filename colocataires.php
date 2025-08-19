@@ -26,7 +26,7 @@ get_header(); // Inclut le header global
         </div>
     </div>
 
-   <div class="users-container d-flex flex-wrap gap-4 justify-content-center">
+    <div class="users-container d-flex flex-wrap gap-4 justify-content-center">
     <?php
     // Récupérer l'article avec le titre "Colocation"
     $article_colocation = new WP_Query([
@@ -60,7 +60,7 @@ get_header(); // Inclut le header global
                         <a href="<?php echo esc_url($link); ?>">
                             <?php echo $img; ?>
                         </a>
-                        <h4 class="user-name"><?php echo $name; ?></h4>
+                        <h4 class="user-name"><?php echo esc_html($name); ?></h4>
                     </div>
     <?php
                 endforeach;
@@ -74,7 +74,7 @@ get_header(); // Inclut le header global
 
     wp_reset_postdata();
     ?>
-</div>
+    </div>
 
     <!-- Pagination -->
     <div class="pagination-container mt-5">
@@ -97,19 +97,6 @@ get_header(); // Inclut le header global
         </nav>
     </div>
 </div>
-
-<script>
-// Interaction pour les boutons des catégories avec emojis
-document.querySelectorAll('.btn-choice').forEach(button => {
-    button.addEventListener('click', function () {
-        // Supprimer la classe "active" des autres boutons
-        document.querySelectorAll('.btn-choice').forEach(btn => btn.classList.remove('active'));
-
-        // Ajouter la classe "active" au bouton sélectionné
-        this.classList.add('active');
-    });
-});
-</script>
 
 <?php
 get_footer();
