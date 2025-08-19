@@ -288,15 +288,63 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  /* HERO section */
+  .hero-content {
+    flex-direction: column; /* Met images au-dessus et texte en dessous */
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-images {
+    grid-template-columns: repeat(2, 1fr); /* grille 2 colonnes au lieu de 3 */
+    width: 100%; /* prend toute la largeur */
+    gap: 10px;
+    margin: 0 auto 20px auto;
+  }
+
+  .hero-images img {
+    width: 100%;   /* chaque image s’adapte */
+    max-width: 160px;
+    height: auto;
+  }
+
+  .hero-text h1 {
+    font-size: 36px;  /* plus petit pour mobile */
+    line-height: 1.3;
+    margin: 20px 0;
+    height: auto;     /* supprime la hauteur fixe */
+    width: auto;
+  }
+
+  .cta-button {
+    margin: 20px auto 0 auto;
+    display: inline-block;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  /* SECTIONS concept & animaux */
   .steps-container, .animals-container {
-      flex-direction: column;
-      align-items: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
   }
 
   .step, .animal {
-      width: 90%; /* Pleine largeur pour petits écrans */
+    width: 100%; /* pleine largeur */
+    max-width: 320px; /* limite pour rester lisible */
+  }
+
+  .step-content {
+    height: auto; /* enlève la hauteur fixe */
+  }
+
+  .animal p {
+    width: 100%;
+    margin-left: 0;
   }
 }
+
 
 
 /* Section Témoignages */
@@ -314,15 +362,68 @@
   color: #C35618; /* Couleur orange */
 }
 
+/* Conteneur des cartes */
+.testimonials-container {
+  display: flex; /* Disposition en ligne */
+  flex-wrap: wrap; /* ⚡ Autorise le retour à la ligne */
+  gap: 20px; /* Espacement entre les cartes */
+  justify-content: center; /* Centre les cartes */
+  padding: 10px 0;
+}
+
+/* Style des cartes */
+.card {
+  flex: 1 1 300px; /* ⚡ Les cartes s’adaptent à l’espace dispo */
+  max-width: 25rem;
+  min-width: 260px; /* ⚡ Empêche d’être trop petites */
+  border: 1px solid #000; /* Bordure sombre */
+  border-radius: 8px;
+  background-color: #F4F0EB;
+}
+
+.card-header {
+  font-family:'Roboto', sans-serif;
+  background-color: #F4F0EB;
+  color: black;
+  text-align: left;
+  padding: 14px;
+  font-size: 16px;
+}
+
+.card-body {
+  padding: 17px;
+}
+
+.card-text {
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  color: #000;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 /* Style Responsive */
+@media (max-width: 1024px) {
+  .testimonials-section h2 {
+    font-size: 42px; /* Réduit le titre */
+  }
+}
+
 @media (max-width: 768px) {
-  .concept-steps, .testimonials {
-    flex-direction: column;
+  .testimonials-container {
+    flex-direction: column; /* ⚡ Les cartes passent en colonne */
     align-items: center;
   }
 
-  .step, .testimonial {
-    width: 90%;
+  .card {
+    width: 90%; /* ⚡ Prend presque toute la largeur */
+    max-width: none;
+  }
+
+  .testimonials-section h2 {
+    font-size: 32px; /* Titre plus petit */
+    text-align: center; /* ⚡ Centré sur mobile */
   }
 
   .hero-images img {
@@ -339,45 +440,14 @@
   }
 }
 
-/* Conteneur des cartes */
-.testimonials-container {
-  display: flex; /* Disposition en ligne */
-  flex-wrap: nowrap; /* Empêche le retour à la ligne */
-  gap: 15px; /* Espacement réduit entre les cartes */
-  overflow-x: auto; /* Défilement horizontal si nécessaire */
-  justify-content: center; /* Centre les cartes dans le conteneur */
-  padding: 10px 0;
-}
+@media (max-width: 480px) {
+  .testimonials-section h2 {
+    font-size: 26px; /* Encore plus petit pour mobile */
+  }
 
-/* Style des cartes */
-.card {
-  flex: 0 0 auto; /* Empêche les cartes de s'étirer */
-  max-width: 25rem; /* Largeur réduite */
-  border: 1px solid #000; /* Bordure sombre */
-  border-radius: 8px; /* Coins légèrement arrondis */
-  background-color: #F4F0EB; /* Fond blanc */
-}
-
-.card-header {
-  font-family:'Roboto', sans-serif; /* Police stylisée */
-  background-color: #F4F0EB; /* Fond orange */
-  color: black; /* Texte blanc */
-  text-align: left;
-  padding: 14px; /* Espacement réduit */
-  font-size: 16px; /* Taille du texte réduite */
-}
-
-.card-body {
-  padding: 17px; /* Espacement interne réduit */
-}
-
-.card-text {
-  font-family: 'Roboto', sans-serif; /* Police lisible */
-  font-weight: normal;
-  color: #000; /* Texte gris */
-  text-align: left;
-  font-size: 14px; /* Taille du texte réduite */
-  line-height: 1.3; /* Hauteur de ligne ajustée */
+  .card-text {
+    font-size: 13px;
+  }
 }
 
 /* Polices importées */
@@ -1585,15 +1655,30 @@ position: absolute;
 }
 
 
-/* Responsive Design */
+/* --- Footer Responsive amélioré --- */
 @media (max-width: 768px) {
   .footer-container {
-      flex-direction: column; /* Empile les sections verticalement */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes équilibrées */
+    gap: 20px;
+    text-align: center;
   }
 
   .footer-logo {
-      margin: 20px 0;
+    grid-column: span 2; /* Logo centré sur toute la largeur */
+    margin-bottom: 20px;
   }
 }
 
+@media (max-width: 480px) {
+  .footer-container {
+    grid-template-columns: 1fr; /* En mobile étroit : 1 seule colonne */
+    gap: 15px;
+  }
+
+  .footer-logo {
+    grid-column: auto;
+    margin-bottom: 10px;
+  }
+}
 
