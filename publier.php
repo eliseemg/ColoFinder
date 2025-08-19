@@ -6,7 +6,7 @@ get_header(); // Inclut le header global
 <div class="publier-container">
     <h1 class="publier-title">PUBLIER UNE ANNONCE</h1>
 
-    <form action="process_publier.php" method="POST" class="needs-validation" novalidate>
+    <form action="process_publier.php" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
         <!-- Type de bien -->
         <div class="form-group">
             <label class="form-label">Type de bien</label>
@@ -83,56 +83,27 @@ get_header(); // Inclut le header global
             </div>
         </div>
 
+        <!-- Photos -->
         <div class="form-group">
-    <label class="form-label">Photos de l’appartement/maison</label>
-    <div class="d-flex flex-wrap gap-2">
-        <?php for ($i = 1; $i <= 6; $i++) : ?>
-            <div class="photo-placeholder">
-                <input type="file" name="photo<?php echo $i; ?>" id="photo<?php echo $i; ?>" accept="image/*" onchange="previewImage(event, <?php echo $i; ?>)">
-                <img src="#" alt="Aperçu de la photo" id="preview-photo<?php echo $i; ?>" class="photo-preview" style="display: none;">
+            <label class="form-label">Photos de l’appartement/maison</label>
+            <div class="d-flex flex-wrap gap-2">
+                <?php for ($i = 1; $i <= 6; $i++) : ?>
+                    <div class="photo-placeholder">
+                        <input type="file" name="photo<?php echo $i; ?>" id="photo<?php echo $i; ?>" accept="image/*">
+                        <img src="#" alt="Aperçu de la photo" id="preview-photo<?php echo $i; ?>" class="photo-preview" style="display: none;">
+                    </div>
+                <?php endfor; ?>
             </div>
-        <?php endfor; ?>
-    </div>
-</div>
+        </div>
 
-<script>
-function previewImage(event, index) {
-    const input = event.target;
-    const file = input.files[0];
-    const preview = document.getElementById(`preview-photo${index}`);
-    
-    if (file) {
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = 'block';
-    } else {
-        preview.src = '';
-        preview.style.display = 'none';
-    }
-}
-</script>
-
- <!-- Bouton Publier -->
+        <!-- Bouton Publier -->
         <div class="text-center mt-4">
-        <a href="<?php echo get_permalink(get_page_by_path('Colocataires')); ?>" class="cta-button">PUBLIER MON ANNONCE</a>
+            <a href="<?php echo get_permalink(get_page_by_path('Colocataires')); ?>" class="cta-button">Publier mon annonce</a>
         </div>
     </form>
 </div>
 
-<script>
-// Interaction pour les boutons de choix
-document.querySelectorAll('.btn-choice').forEach(button => {
-    button.addEventListener('click', function () {
-        const siblings = this.parentNode.querySelectorAll('.btn-choice');
-        siblings.forEach(sib => sib.classList.remove('active'));
-        this.classList.add('active');
-        const hiddenInput = this.parentNode.querySelector('input[type="hidden"]');
-        hiddenInput.value = this.getAttribute('data-value');
-    });
-});
-</script>
-
 <?php
 get_footer();
 ?>
-
 
