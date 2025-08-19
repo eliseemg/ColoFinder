@@ -1,48 +1,95 @@
 <?php
-add_theme_support('post-thumbnails');
-add_theme_support('title-tag');
-add_theme_support('menus');
-add_theme_support('post-thumbnails');
-add_filter('upload_mimes', 'enable_svg_upload');
-function enable_svg_upload($mimes) {
-  $mimes['svg'] = 'image/svg+xml';
-  return $mimes;
-}
+/**
+ * functions.php — Colofinder (version finale)
+ */
 
-register_nav_menu('header', 'En tête du menu');
+/* ---------------------------------------------
+ * 1) Réglages du thème + menus
+ * --------------------------------------------- */
+add_action('after_setup_theme', function () {
+  add_theme_support('post-thumbnails');
+  add_theme_support('title-tag');
+  add_theme_support('menus');
 
-function styles_scripts()
-{
+  // Emplacements de menus utilisés dans le header
+  register_nav_menus([
+    'primary'   => __('Menu principal', 'colofinder'),   // Non connecté
+    'connected' => __('Menu connecté', 'colofinder'),    // Connecté
+  ]);
+});
+
+
+/* ---------------------------------------------
+ * 2) Enqueue CSS/JS (un seul point d’entrée)
+ * --------------------------------------------- */
+function colofinder_enqueue_assets() {
+  // Google Fonts
   wp_enqueue_style(
-    'bootstrap',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'
-  );
-  wp_enqueue_style(
-    'style',
-    get_template_directory_uri() . '/assets/css/app.css'
+    'colofinder-google-fonts',
+    'https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;500;700&display=swap',
+    [],
+    null
   );
 
+  // Bootstrap CSS
+  wp_enqueue_style(
+    'bootstrap-css',
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+    [],
+    '5.3.3'
+  );
+
+  // style.css (thème) versionné pour casser le cache
+  $style_path = get_stylesheet_directory() . '/style.css';
+  $style_ver  = file_exists($style_path) ? filemtime($style_path) : wp_get_theme()->get('Version');
+  wp_enqueue_style(
+    'colofinder-style',
+    get_stylesheet_uri(),
+    ['bootstrap-css','colofinder-google-fonts'],
+    $style_ver
+  );
+
+  // app.css (optionnel)
+  $app_css_path = get_template_directory() . '/assets/css/app.css';
+  if ( file_exists( $app_css_path ) ) {
+    $app_css_ver = filemtime( $app_css_path );
+    wp_enqueue_style(
+      'colofinder-app-css',
+      get_template_directory_uri() . '/assets/css/app.css',
+      ['colofinder-style'],
+      $app_css_ver
+    );
+  }
+
+  // Bootstrap JS (bundle = avec Popper)
   wp_enqueue_script(
-    'bootstrap-bundle',
+    'bootstrap-js',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-    false,
-    1,
+    [],
+    '5.3.3',
     true
   );
-  wp_enqueue_script(
-    'app-js',
-    get_template_directory_uri() . '/assets/js/app.js',
-    ['bootstrap-bundle'],
-    1,
-    true
-  );
+
+  // app.js (ton JS custom)
+  $app_js_path = get_template_directory() . '/assets/js/app.js';
+  if ( file_exists( $app_js_path ) ) {
+    $app_js_ver = filemtime( $app_js_path );
+    wp_enqueue_script(
+      'colofinder-app-js',
+      get_template_directory_uri() . '/assets/js/app.js',
+      ['bootstrap-js'],
+      $app_js_ver,
+      true
+    );
+  }
 }
-add_action('wp_enqueue_scripts', 'styles_scripts');
+add_action('wp_enqueue_scripts', 'colofinder_enqueue_assets');
 
-// CUSTOM POSTS TYPES
 
-function create_post_type()
-{
+/* ---------------------------------------------
+ * 3) Custom Post Types (facultatifs mais gardés)
+ * --------------------------------------------- */
+function colofinder_register_cpts() {
   register_post_type('faqs', [
     'labels' => ['name' => 'FAQs'],
     'supports' => ['title', 'editor', 'thumbnail'],
@@ -50,6 +97,7 @@ function create_post_type()
     'has_archive' => true,
     'rewrite' => ['slug' => 'faqs']
   ]);
+
   register_post_type('services', [
     'labels' => ['name' => 'Services'],
     'supports' => ['title', 'editor', 'thumbnail'],
@@ -58,97 +106,95 @@ function create_post_type()
     'rewrite' => ['slug' => 'services']
   ]);
 }
-add_action('init', 'create_post_type');
+add_action('init', 'colofinder_register_cpts');
 
-// MENUS
-function menuheader_class($classes)
-{
-  $classes[] = 'nav-item';
+
+/* ---------------------------------------------
+ * 4) Détection des menus du header
+ * --------------------------------------------- */
+function cf_is_header_menu_args($args) {
+  $by_location = isset($args->theme_location) && in_array($args->theme_location, ['primary','connected'], true);
+  $by_name     = isset($args->menu) && in_array($args->menu, ['Menu principal','Menu connecté'], true);
+  return $by_location || $by_name;
+}
+
+/* ---------------------------------------------
+ * 5) Classes Bootstrap pour les menus
+ * --------------------------------------------- */
+add_filter('nav_menu_css_class', function ($classes, $item, $args) {
+  if ( cf_is_header_menu_args($args) ) {
+    $classes[] = 'nav-item';
+    if ( in_array('menu-item-has-children', $classes, true) ) {
+      $classes[] = 'dropdown';
+    }
+  }
   return $classes;
-}
-add_filter('nav_menu_css_class', 'menuheader_class');
+}, 10, 3);
 
-function menuheader_link_class($attributes)
-{
-  $attributes['class'] = 'nav-link';
-  return $attributes;
-}
-add_filter('nav_menu_link_attributes', 'menuheader_link_class');
-
-function colofinder_enqueue_styles() {
-  // Charger les styles
-  wp_enqueue_style('colofinder-style', get_stylesheet_uri());
-  
-  // Charger les polices Google
-  wp_enqueue_style('colofinder-google-fonts', 'https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;500&family=Carter+One&display=swap', [], null);
-}
-
-add_action('wp_enqueue_scripts', 'colofinder_enqueue_styles');
-// Fonction pour récupérer les témoignages (chemins des images)
-function get_testimonials() {
-  return [
-      get_template_directory_uri() . '/assets/img/temoignage_Jim.png',
-      get_template_directory_uri() . '/assets/img/temoignage_Jennie.png',
-      get_template_directory_uri() . '/assets/img/temoignage_hawa.png',
-  ];
-}
-
-function charger_bootstrap_et_styles_inscription() {
-  // Bootstrap CSS
-  wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
-  // Votre style CSS spécifique
-  wp_enqueue_style('style-inscription', get_template_directory_uri() . '/style-inscription.css');
-
-  // Bootstrap JS
-  wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', array(), null, true);
-}
-add_action('wp_enqueue_scripts', 'charger_bootstrap_et_styles_inscription');
-
-function charger_css_page_aide() {
-  if (is_page_template('aide.php')) { // Vérifie si le template actif est "aide.php"
-      wp_enqueue_style('style-aide', get_template_directory_uri() . '/css/style-aide.css', array(), '1.0');
+add_filter('nav_menu_link_attributes', function ($atts, $item, $args) {
+  if ( cf_is_header_menu_args($args) ) {
+    $base = 'nav-link';
+    if ( in_array('menu-item-has-children', $item->classes ?? [], true) ) {
+      $base .= ' dropdown-toggle';
+      $atts['data-bs-toggle'] = $atts['data-bs-toggle'] ?? 'dropdown';
+      $atts['aria-expanded']  = $atts['aria-expanded']  ?? 'false';
+      $atts['role']           = $atts['role']           ?? 'button';
+    }
+    $atts['class'] = isset($atts['class']) ? $atts['class'].' '.$base : $base;
   }
-}
-add_action('wp_enqueue_scripts', 'charger_css_page_aide');
+  return $atts;
+}, 10, 3);
 
-function charger_styles_inscription() {
-  if (is_page_template('page-inscription.php')) {
-      wp_enqueue_style('style-inscription', get_template_directory_uri() . '/style-inscription.css');
-  }
-}
-add_action('wp_enqueue_scripts', 'charger_styles_inscription');
-function charger_styles_inscription_partie_2() {
-  if (is_page_template('page-inscription-partie-2.php')) {
-      wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
-      wp_enqueue_style('style-inscription-partie-2', get_template_directory_uri() . '/assets/css/style-inscription-partie-2.css');
-      wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', array(), null, true);
-  }
-}
-add_action('wp_enqueue_scripts', 'charger_styles_inscription_partie_2');
-function charger_styles_connexion() {
-  if (is_page_template('connexion.php')) {
-      wp_enqueue_style('style-connexion', get_template_directory_uri() . '/style-connexion.css');
-  }
-}
-add_action('wp_enqueue_scripts', 'charger_styles_connexion');
-function enqueue_custom_styles() {
-  wp_enqueue_style('main-style', get_template_directory_uri() . '/styles.css');
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_styles');
-function charger_styles_publier() {
-  // Vérifie si on est sur la page avec le modèle "Publier"
-  if (is_page_template('publier.php')) {
-      // Charger le fichier CSS spécifique à la page Publier
-      wp_enqueue_style(
-          'publier-style',
-          get_template_directory_uri() . '/css/publier.css', // Assurez-vous que ce chemin est correct
-          [],
-          '1.0'
-      );
 
-      // Charger Bootstrap si nécessaire (au cas où il n'est pas encore chargé globalement)
-      wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
-      wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', [], null, true);
-  }
-}
+/* ---------------------------------------------
+ * 6) Redirections connexion / inscription
+ * --------------------------------------------- */
 
+// Redirection après connexion
+add_filter('login_redirect', function($redirect_to, $request, $user){
+  // Redirige toujours vers l'accueil (ou autre)
+  return home_url('/');
+}, 10, 3);
+
+// Si tu veux rediriger vers la page "informations" à la place :
+// add_filter('login_redirect', function(){ return get_permalink( get_page_by_path('informations') ); });
+
+
+/* ---------------------------------------------
+ * 8) Gestion du formulaire d'inscription
+ * --------------------------------------------- */
+function handle_custom_registration() {
+  // Vérifie que les champs existent
+  if ( empty($_POST['email']) || empty($_POST['password']) || empty($_POST['confirm_password']) ) {
+      wp_safe_redirect( home_url('/inscription?error=1') );
+      exit;
+  }
+
+  $email    = sanitize_email($_POST['email']);
+  $password = sanitize_text_field($_POST['password']);
+  $confirm  = sanitize_text_field($_POST['confirm_password']);
+
+  // Vérifie mots de passe identiques
+  if ( $password !== $confirm ) {
+      wp_safe_redirect( home_url('/inscription?error=1') );
+      exit;
+  }
+
+  // Crée l’utilisateur WordPress
+  $user_id = wp_create_user($email, $password, $email);
+
+  if ( is_wp_error($user_id) ) {
+      wp_safe_redirect( home_url('/inscription?error=1') );
+      exit;
+  }
+
+  // Connecte automatiquement le nouvel utilisateur
+  wp_set_current_user($user_id);
+  wp_set_auth_cookie($user_id);
+
+  // ✅ Redirige vers inscription2.php (slug de la page "Inscription2")
+  wp_safe_redirect( home_url('/inscription2') );
+  exit;
+}
+add_action('admin_post_nopriv_custom_registration', 'handle_custom_registration');
+add_action('admin_post_custom_registration', 'handle_custom_registration');
