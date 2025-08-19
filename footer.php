@@ -12,46 +12,20 @@
         <div class="footer-section">
             <h4>Réseaux sociaux</h4>
             <div class="social-icons">
-    <?php
-    // Récupérer l'article avec le titre "reseaux"
-    $article_reseaux = new WP_Query([
-        'post_type' => 'post', // Type de contenu (article)
-        'name' => 'reseaux', // Slug de l'article
-    ]);
-
-    if ($article_reseaux->have_posts()) :
-        while ($article_reseaux->have_posts()) : $article_reseaux->the_post();
-            // Récupérer tout le contenu de l'article (incluant les images)
-            $content = get_the_content();
-
-            // Extraire les balises <img> du contenu
-            preg_match_all('/<img[^>]+>/i', $content, $images);
-
-            // Afficher chaque image dans un lien social
-            if (!empty($images[0])) :
-                foreach ($images[0] as $index => $img) :
-                    // Définir des liens personnalisés en fonction de l'ordre ou autre logique
-                    $links = ['https://www.tiktok.com', 'https://www.facebook.com', 'https://www.instagram.com', 'https://www.x.com'];
-                    $link = $links[$index] ?? '#'; // Utilise les liens définis ou un lien par défaut
-                    ?>
-                    <a href="<?php echo esc_url($link); ?>" aria-label="Social Link">
-                        <?php echo $img; // Affiche l'image ?>
-                    </a>
-                <?php
-                endforeach;
-            else :
-                echo '<p>Aucune icône trouvée dans cet article.</p>';
-            endif;
-        endwhile;
-    else :
-        echo '<p>Aucun article trouvé.</p>';
-    endif;
-
-    // Réinitialise la boucle globale de WordPress
-    wp_reset_postdata();
-    ?>
-</div>
-
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/facebook.png" alt="Facebook"> 
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.twitter.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/twitter.png" alt="Twitter">
+                </a>
+                <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/tiktok.png" alt="TikTok">
+                </a>
+               
+            </div>
         </div>
 
         <!-- Logo principal -->
