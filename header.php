@@ -1,50 +1,75 @@
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
-    <meta charset="<?php bloginfo('charset'); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/style.css">
-    <?php wp_head(); ?>
+  <meta charset="<?php bloginfo('charset'); ?>">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<header class="site-header">
-    <div class="header-container">
-        <!-- Dropdown Annonces -->
-        <div class="dropdown header-left">
-            <a class="dropdown-toggle header-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Annonces
+<?php wp_body_open(); ?>
+
+<nav class="cf-nav" role="Menu" aria-label="Menu principal">
+  <div class="container">
+    <ul class="cf-quad">
+
+      <!-- 1) Annonces -->
+      <li class="cf-item has-submenu">
+        <a href="#" class="cf-link" aria-haspopup="true" aria-expanded="false">Annonces</a>
+        <ul class="cf-submenu" role="menu" aria-label="Sous-menu Annonces">
+          <li role="none">
+            <a role="menuitem" class="cf-sub-link" href="<?php echo esc_url( get_permalink( get_page_by_path('colocataires') ) ); ?>">
+              Je recherche un logement
             </a>
-            <ul class="dropdown-menu">
-               <li><a class="dropdown-item" href="<?php echo get_permalink(get_page_by_path('Publier')); ?>">Publier</a></li>
-               <li><a class="dropdown-item" href="<?php echo get_permalink(get_page_by_path('Colocataires')); ?>">Recherche</a></li>
-            </ul>
-        </div>
+          </li>
+          <li role="none">
+            <a role="menuitem" class="cf-sub-link" href="<?php echo esc_url( get_permalink( get_page_by_path('publier') ) ); ?>">
+              Publier une annonce
+            </a>
+          </li>
+        </ul>
+      </li>
 
-        <!-- Logo -->
-        <div class="logo header-center">
-            <a href="<?php echo home_url(); ?>">COLOFINDER</a>
-        </div>
+      <!-- 2) Logo CENTRÉ -->
+      <li class="cf-item cf-logo">
+        <a class="cf-logo-link" href="<?php echo esc_url( home_url('/') ); ?>">COLOFINDER</a>
+      </li>
 
-        <!-- Dropdown Profil et Aide -->
-        <div class="header-right">
-            <!-- Profil Dropdown -->
-            <div class="dropdown">
-                <a class="dropdown-toggle header-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Profil
-                </a>
-                <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="<?php echo get_permalink(get_page_by_path('Inscription')); ?>">Inscription</a></li>
-                <li><a class="dropdown-item" href="<?php echo get_permalink(get_page_by_path('Connexion')); ?>">Connexion</a></li>
-                <li><a class="dropdown-item" href="<?php echo get_permalink(get_page_by_path('Informations')); ?>">Informations Personnelles</a></li>
-            </div>
+      <!-- 3) Profil -->
+      <li class="cf-item has-submenu">
+        <a href="#" class="cf-link" aria-haspopup="true" aria-expanded="false">Profil</a>
+        <ul class="cf-submenu" role="menu" aria-label="Sous-menu Profil">
+          <?php if ( is_user_logged_in() ) : ?>
+            <li role="none">
+              <a role="menuitem" class="cf-sub-link" href="<?php echo esc_url( get_permalink( get_page_by_path('informations') ) ); ?>">
+                Informations
+              </a>
+            </li>
+            <li role="none">
+              <a role="menuitem" class="cf-sub-link" href="<?php echo esc_url( wp_logout_url( home_url('/') ) ); ?>">
+                Se déconnecter
+              </a>
+            </li>
+          <?php else : ?>
+            <li role="none">
+              <a role="menuitem" class="cf-sub-link" href="<?php echo esc_url( get_permalink( get_page_by_path('inscription') ) ); ?>">
+                Inscription
+              </a>
+            </li>
+            <li role="none">
+              <a role="menuitem" class="cf-sub-link" href="<?php echo esc_url( get_permalink( get_page_by_path('connexion') ) ); ?>">
+                Connexion
+              </a>
+            </li>
+          <?php endif; ?>
+        </ul>
+      </li>
 
-            <!-- Aide -->
-            <a href="<?php echo get_permalink(get_page_by_path('aide')); ?>" class="header-link">Aide</a>
-        </div>
-    </div>
-</header>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<?php wp_footer(); ?>
-</body> 
-</html>
+      <!-- 4) Aide -->
+      <li class="cf-item">
+        <a class="cf-link" href="<?php echo esc_url( get_permalink( get_page_by_path('aide') ) ); ?>">Aide</a>
+      </li>
+
+    </ul>
+  </div>
+</nav>
+
